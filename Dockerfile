@@ -5,9 +5,11 @@ maintainer gensmusic <gensmusic@163.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN add-apt-repository -y ppa:nginx/stable && \
-    apt-get update && install -y software-properties-common && \
-            build-essential git python python-dev python-setuptools \
+RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    add-apt-repository -y ppa:nginx/stable && \
+    apt-get update && \
+    apt-get install -y build-essential git python python-dev python-setuptools \
             nginx supervisor ibmysqlclient-dev && \
     rm -rf /var/lib/apt/lists/*
 
