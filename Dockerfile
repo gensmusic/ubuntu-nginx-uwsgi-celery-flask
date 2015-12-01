@@ -10,7 +10,7 @@ RUN apt-get update && \
     add-apt-repository -y ppa:nginx/stable && \
     apt-get update && \
     apt-get install -y build-essential git python python-dev python-setuptools \
-            nginx supervisor ibmysqlclient-dev && \
+            nginx supervisor libmysqlclient-dev && \
     rm -rf /var/lib/apt/lists/*
 
 RUN easy_install pip && \
