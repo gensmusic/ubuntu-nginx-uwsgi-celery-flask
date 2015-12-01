@@ -1,43 +1,33 @@
-FROM python:2.7
-MAINTAINER gensmusic <gensmusic@163.com>
+# A container which runs nginx, uwsgi and flask.
+FROM ubuntu:14.04
+
+maintainer gensmusic <gensmusic@163.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-ENV UWSGIVERSION 2.0.11.2
+RUN add-apt-repository -y ppa:nginx/stable && \
+    apt-get update && install -y software-properties-common && \
+            build-essential git python python-dev python-setuptools \
+            nginx supervisor ibmysqlclient-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-            build-essential \
-            libjansson-dev \
-            libpcre3-dev \
-            libssl-dev \
-            libxml2-dev \
-            wget \
-            zlib1g-dev
+RUN easy_install pip && \
+    pip install uwsgi celery
 
-RUN pip install gevent greenlet
+RUN mkdir -p /var/log/uwsgi && \
+    mkdir -p /var/log/celery && \
+    mkdir -p /var/lib/celery && \
+    touch /var/lib/celery/beat.db
 
-RUN cd /usr/src && \
-    wget --quiet -O - http://projects.unbit.it/downloads/uwsgi-${UWSGIVERSION}.tar.gz | \
-    tar zxvf -
+# setup all the configfiles
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN rm /etc/nginx/sites-enabled/default
+# RUN ln -s /data/nginx.conf /etc/nginx/sites-enabled/
+# RUN ln -s /data/supervisor.conf /etc/supervisor/conf.d/
 
-RUN cd /usr/src/uwsgi-${UWSGIVERSION} && \
-    python uwsgiconfig.py --build default && \
-    python setup.py install
+EXPOSE 80 443
 
-EXPOSE 9000 9002
-
-ENV NUM_PROCESSES=1 NUM_THREADS=1 WSGI_MODULE="" WSGI_FILE="" \
-    ADDITIONAL_ARGUMENTS="" ADDITIONAL_USER_ARGUMENTS=""
-
-# Run uwsgi unpriviledged
-RUN groupadd uwsgi && useradd -g uwsgi uwsgi
-
-# Make a directory to serve uwsgi files
-RUN mkdir -vp /var/uwsgi && chown -v uwsgi.uwsgi /var/uwsgi
+# CMD ["supervisord", "-n"]
 
 COPY run.sh /usr/local/bin/run.sh
-
-# Add a script to easily install uWSGI plugin
-COPY docker-install-uwsgi-plugin.sh /usr/local/bin/docker-install-uwsgi-plugin
-
-CMD ["/usr/local/bin/run.sh"]
+CMD ["run.sh"]
