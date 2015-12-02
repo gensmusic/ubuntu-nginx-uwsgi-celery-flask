@@ -37,7 +37,7 @@ RUN rm /etc/nginx/sites-enabled/default
 COPY nginx.conf /etc/nginx/sites-enabled/
 COPY supervisor.conf /etc/supervisor/conf.d/
 RUN mkdir -p /etc/uwsgi/vassals
-COPY uwsgi.ini /etc/uwsgi/vassals
+COPY uwsgi.ini /etc/uwsgi/vassals/
 
 EXPOSE 80 443
 
