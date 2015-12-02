@@ -16,7 +16,7 @@ RUN apt-get update && \
     add-apt-repository -y ppa:nginx/stable && \
     apt-get update && \
     apt-get install -y build-essential git python python-dev python-setuptools \
-            nginx supervisor libmysqlclient-dev && \
+            nginx supervisor libmysqlclient-dev \
             libtiff4-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.5-dev tk8.5-dev python-tk && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
