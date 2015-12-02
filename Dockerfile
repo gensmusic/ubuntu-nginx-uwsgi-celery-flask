@@ -10,8 +10,6 @@ FROM ubuntu:14.04
 maintainer gensmusic <gensmusic@163.com>
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV CELERY_VERSION 3.1.19
-ENV UWSGI_VERSION 2.0.11.2
 
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
@@ -19,11 +17,12 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y build-essential git python python-dev python-setuptools \
             nginx supervisor libmysqlclient-dev && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # Install celery,uwsgi and cleanup the cache
 RUN easy_install pip && \
-    pip install uwsgi==${UWSGI_VERSION} celery==${CELERY_VERSION} --cache-dir=/tmp/pip_cache && \
+    pip install uwsgi celery --cache-dir=/tmp/pip_cache && \
     rm -rf /tmp/pip_cache
 
 RUN mkdir -p /var/log/uwsgi && \
